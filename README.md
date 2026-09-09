@@ -17,6 +17,12 @@ npm install github:backpaper0/mdloom
 - `npx puppeteer browsers install chrome` を手動実行してChromiumを取得する
 - 既存のChrome/Chromiumを使う場合は`PUPPETEER_EXECUTABLE_PATH`でその実行ファイルを指定する
 
+インストールせずに`npx`から直接実行することもできます。
+
+```sh
+npx github:backpaper0/mdloom <input.md> -o <output.html>
+```
+
 ## 使い方
 
 ```sh
