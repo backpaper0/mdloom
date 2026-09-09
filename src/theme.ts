@@ -1,28 +1,24 @@
 /**
- * mdloom Default Theme (issue #5 で決定した "Card Stack" バリアント).
- * 元データ: `prototype/theme-default` ブランチの `default-theme.css`。
- * markserve (https://github.com/backpaper0/markserve) のトーンを参考にした
- * パステルピンク/ブルー/ラベンダー、角丸16px/10px、ソフトシャドウの配色。
+ * mdloom Default Theme.
+ * 元データ: `markdown-pastel.css` (VS Code Markdown Preview 向けパステルテーマ)。
+ * パステルピンク/パープル/ブルー、見出しのグラデーション、角丸12px、ソフトシャドウの配色。
  */
 export const DEFAULT_THEME_CSS = `:root {
-  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
-    "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
-
+  --pastel-bg: #fdfcff;
+  --pastel-text: #4a4458;
+  --pastel-heading: #6a5d8f;
   --pastel-pink: #ffd6e8;
-  --pastel-pink-strong: #ff8fb1;
-  --pastel-blue: #cfe8ff;
-  --pastel-blue-strong: #7fb8e8;
-  --pastel-lavender: #e5d9ff;
-  --pastel-lavender-strong: #b9a3f5;
-  --text-main: #4a4a4a;
-  --text-muted: #8a8a99;
-  --bg: #fffdfb;
-  --bg-soft: #fafbfe;
-  --bg-code: #f6f4ff;
-  --border-soft: #eee7fb;
-  --radius-lg: 16px;
-  --radius-md: 10px;
-  --shadow-soft: 0 2px 10px rgba(120, 100, 160, 0.12);
+  --pastel-purple: #e5d4ff;
+  --pastel-blue: #d4e8ff;
+  --pastel-mint: #d4f5e9;
+  --pastel-yellow: #fff3d4;
+  --pastel-peach: #ffe4d6;
+  --pastel-border: #ece7f5;
+  --pastel-accent: #b8a4e0;
+  --pastel-link: #a67fd4;
+  --pastel-code-bg: #f5f1fb;
+  --pastel-quote-bg: #f7f3ff;
+  --pastel-shadow: rgba(184, 164, 224, 0.15);
 }
 
 * {
@@ -34,117 +30,225 @@ html, body {
   padding: 0;
 }
 
-body {
-  font-family: var(--font-system);
-  background: var(--bg);
-  color: var(--text-main);
-  line-height: 1.8;
+.markdown-body {
+  font-family: "UD Digi Kyokasho NP-R", "UD Digi Kyokasho NP",
+    "UD Digi Kyokasho N-R", "UD Digi Kyokasho N", "UDデジタル教科書体 NP-R",
+    "Segoe UI", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  background: var(--pastel-bg);
+  color: var(--pastel-text);
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  letter-spacing: 0.02em;
 }
 
-.markdown-body {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+/* Headings */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: var(--pastel-heading);
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 1.8em;
+  margin-bottom: 0.7em;
 }
 
 .markdown-body h1 {
-  font-size: 2rem;
-  margin: 0 0 0.6em;
+  font-size: 2.2em;
+  padding-bottom: 0.4em;
+  background: linear-gradient(120deg, #d4548f, #8a5fd4, #4a7fd4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--pastel-pink), var(--pastel-purple), var(--pastel-blue)) 1;
 }
 
 .markdown-body h2 {
-  font-size: 1.4rem;
-  margin: 2.2em 0 1em;
-  padding-left: 0.7em;
-  border-left: 6px solid var(--pastel-pink-strong);
-  border-image: linear-gradient(var(--pastel-pink-strong), var(--pastel-blue-strong)) 1;
+  font-size: 1.6em;
+  padding: 0.2em 0.7em;
+  border-left: 6px solid var(--pastel-accent);
+  background: linear-gradient(90deg, var(--pastel-purple), transparent);
+  border-radius: 0 8px 8px 0;
 }
 
 .markdown-body h3 {
-  font-size: 1.1rem;
-  margin: 1.6em 0 0.6em;
-  color: var(--text-main);
+  font-size: 1.3em;
+  padding-bottom: 0.3em;
+  border-bottom: 2px dashed var(--pastel-border);
 }
 
-.markdown-body p,
-.markdown-body ul,
-.markdown-body ol {
-  margin: 0.9em 0;
+.markdown-body h4 {
+  font-size: 1.1em;
 }
 
+.markdown-body h4::before {
+  content: "✿ ";
+  color: var(--pastel-accent);
+}
+
+/* Links */
 .markdown-body a {
-  color: var(--pastel-blue-strong);
+  color: var(--pastel-link);
   text-decoration: none;
+  border-bottom: 1px solid var(--pastel-accent);
+  transition: all 0.2s ease;
 }
 
 .markdown-body a:hover {
-  text-decoration: underline;
+  color: var(--pastel-heading);
+  background: var(--pastel-purple);
+  border-radius: 3px;
 }
 
+/* Paragraphs & lists */
+.markdown-body p {
+  margin: 1em 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.6em;
+}
+
+.markdown-body li {
+  margin: 0.4em 0;
+}
+
+.markdown-body ul li::marker {
+  color: var(--pastel-accent);
+}
+
+.markdown-body ol li::marker {
+  color: var(--pastel-accent);
+  font-weight: 700;
+}
+
+/* Blockquote */
 .markdown-body blockquote {
   margin: 1.2em 0;
-  padding: 0.8em 1.2em;
-  background: var(--bg-soft);
-  border-left: 4px solid var(--pastel-lavender-strong);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  color: var(--text-muted);
-  box-shadow: var(--shadow-soft);
+  padding: 0.8em 1.4em;
+  background: var(--pastel-quote-bg);
+  border-left: 5px solid var(--pastel-accent);
+  border-radius: 0 10px 10px 0;
+  color: var(--pastel-text);
+  box-shadow: 0 2px 8px var(--pastel-shadow);
 }
 
+.markdown-body blockquote p {
+  margin: 0.3em 0;
+}
+
+/* Inline code */
 .markdown-body code {
-  background: var(--bg-code);
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  background: var(--pastel-code-bg);
+  color: #b5588f;
+  padding: 0.15em 0.45em;
   border-radius: 6px;
-  padding: 0.15em 0.4em;
   font-size: 0.9em;
 }
 
+/* Code block */
 .markdown-body pre {
-  background: var(--bg-code);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
-  padding: 1.1rem 1.3rem;
-  overflow-x: auto;
+  background: var(--pastel-code-bg);
+  padding: 1.2em;
+  border-radius: 12px;
+  overflow: auto;
+  border: 1px solid var(--pastel-border);
+  box-shadow: 0 4px 14px var(--pastel-shadow);
 }
 
 .markdown-body pre code {
-  background: none;
+  background: transparent;
+  color: var(--pastel-text);
   padding: 0;
-  font-size: 0.88em;
+  font-size: 1em;
+  line-height: 1.6;
 }
 
+/* Tables */
 .markdown-body table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
-  margin: 1.2em 0;
-  border-radius: var(--radius-md);
+  margin: 1.4em 0;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: var(--shadow-soft);
-}
-
-.markdown-body th,
-.markdown-body td {
-  border: 1px solid var(--border-soft);
-  padding: 0.6em 0.9em;
-  text-align: left;
+  box-shadow: 0 4px 14px var(--pastel-shadow);
 }
 
 .markdown-body th {
+  background: linear-gradient(120deg, var(--pastel-purple), var(--pastel-pink));
+  color: var(--pastel-heading);
+  font-weight: 700;
+  padding: 0.7em 1em;
+  text-align: left;
+}
+
+.markdown-body td {
+  padding: 0.6em 1em;
+  border-top: 1px solid var(--pastel-border);
+}
+
+.markdown-body tr:nth-child(even) td {
+  background: var(--pastel-quote-bg);
+}
+
+.markdown-body tr:hover td {
   background: var(--pastel-blue);
 }
 
+/* Horizontal rule */
 .markdown-body hr {
   border: none;
-  border-top: 2px dashed var(--pastel-lavender-strong);
-  margin: 2.4em 0;
+  height: 3px;
+  margin: 2.5em 0;
+  background: linear-gradient(90deg, transparent, var(--pastel-pink), var(--pastel-purple), var(--pastel-blue), transparent);
+  border-radius: 3px;
 }
 
-/* Diagram Viewer への導線 (CONTEXT.md: Diagram / Diagram Viewer, issue #6 の決定) */
+/* Images */
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--pastel-shadow);
+}
+
+/* Task lists */
+.markdown-body input[type="checkbox"] {
+  accent-color: var(--pastel-accent);
+  width: 1.05em;
+  height: 1.05em;
+  vertical-align: middle;
+}
+
+/* Emphasis */
+.markdown-body strong {
+  color: var(--pastel-heading);
+  font-weight: 700;
+}
+
+.markdown-body mark {
+  background: var(--pastel-yellow);
+  color: var(--pastel-text);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+}
+
+/* Diagram Viewer への導線 (CONTEXT.md: Diagram / Diagram Viewer) */
 .mdloom-diagram {
   position: relative;
-  margin: 1.2em 0;
-  background: var(--bg-soft);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  margin: 1.4em 0;
+  background: var(--pastel-quote-bg);
+  border: 1px solid var(--pastel-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 14px var(--pastel-shadow);
   padding: 1.4rem;
   text-align: center;
   cursor: zoom-in;
@@ -152,7 +256,7 @@ body {
 
 .mdloom-diagram:hover,
 .mdloom-diagram:focus-visible {
-  box-shadow: 0 4px 16px rgba(120, 100, 160, 0.2);
+  box-shadow: 0 6px 20px var(--pastel-shadow);
   outline: none;
 }
 
@@ -166,6 +270,6 @@ body {
   display: block;
   margin-top: 0.8rem;
   font-size: 0.8em;
-  color: var(--text-muted);
+  color: var(--pastel-heading);
 }
 `;
