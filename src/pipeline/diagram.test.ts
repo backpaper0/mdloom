@@ -54,6 +54,21 @@ describe("renderDiagrams", () => {
     expect(closeMock).toHaveBeenCalledTimes(1);
   });
 
+  it("renders with the base Mermaid.js theme", async () => {
+    renderMermaidMock.mockResolvedValue({
+      data: Buffer.from("<svg></svg>", "utf-8"),
+    });
+
+    await renderDiagrams([{ id: "a", definition: "graph TD; A-->B;" }]);
+
+    expect(renderMermaidMock).toHaveBeenCalledWith(
+      expect.anything(),
+      "graph TD; A-->B;",
+      "svg",
+      { mermaidConfig: { theme: "base" } },
+    );
+  });
+
   it("closes the browser even when rendering fails", async () => {
     renderMermaidMock.mockRejectedValue(new Error("invalid diagram"));
 

@@ -22,7 +22,9 @@ export async function renderDiagrams(
   const browser = await puppeteer.launch({ headless: true });
   try {
     for (const { id, definition } of requests) {
-      const { data } = await renderMermaid(browser, definition, "svg", {});
+      const { data } = await renderMermaid(browser, definition, "svg", {
+        mermaidConfig: { theme: "base" },
+      });
       results.set(id, Buffer.from(data).toString("utf-8"));
     }
   } finally {
