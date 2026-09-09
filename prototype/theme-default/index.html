@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[PROTOTYPE] mdloom Default Theme — issue #5</title>
+<style>
+/* =========================================================================
+   PROTOTYPE — 使い捨てコード。issue #5 (Default Themeのビジュアルデザイン試作)
+   の検証用。確定後は throwaway branch へ退避し、main には残さない。
+
+   3つのバリアントを ?variant=a|b|c で切り替え可能。
+   参考: https://github.com/backpaper0/markserve (パステルカラー・角丸・ソフトシャドウ)
+   ========================================================================= */
+
+:root {
+  --font-system: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
+    "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+  --font-serif: "Hiragino Mincho ProN", "Yu Mincho", Georgia, "Times New Roman", serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-system);
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 8rem;
+}
+
+/* -------------------------------------------------------------------------
+   Variant A — "Card Stack": markserveに最も近い。各要素がカード化され、
+   ソフトシャドウ・角丸・グラデーションアクセントで構成される。
+   ------------------------------------------------------------------------- */
+body[data-variant="a"] {
+  --pastel-pink: #ffd6e8;
+  --pastel-pink-strong: #ff8fb1;
+  --pastel-blue: #cfe8ff;
+  --pastel-blue-strong: #7fb8e8;
+  --pastel-lavender: #e5d9ff;
+  --pastel-lavender-strong: #b9a3f5;
+  --text-main: #4a4a4a;
+  --text-muted: #8a8a99;
+  --bg: #fffdfb;
+  --bg-soft: #fafbfe;
+  --bg-code: #f6f4ff;
+  --border-soft: #eee7fb;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --shadow-soft: 0 2px 10px rgba(120, 100, 160, 0.12);
+  background: var(--bg);
+  color: var(--text-main);
+  line-height: 1.8;
+}
+body[data-variant="a"] h1 {
+  font-size: 2rem;
+  margin: 0 0 0.6em;
+}
+body[data-variant="a"] h2 {
+  font-size: 1.4rem;
+  margin: 2.2em 0 1em;
+  padding-left: 0.7em;
+  border-left: 6px solid var(--pastel-pink-strong);
+  border-image: linear-gradient(var(--pastel-pink-strong), var(--pastel-blue-strong)) 1;
+}
+body[data-variant="a"] h3 {
+  font-size: 1.1rem;
+  margin: 1.6em 0 0.6em;
+  color: var(--text-main);
+}
+body[data-variant="a"] p, body[data-variant="a"] ul, body[data-variant="a"] ol {
+  margin: 0.9em 0;
+}
+body[data-variant="a"] a { color: var(--pastel-blue-strong); text-decoration: none; }
+body[data-variant="a"] a:hover { text-decoration: underline; }
+body[data-variant="a"] blockquote {
+  margin: 1.2em 0;
+  padding: 0.8em 1.2em;
+  background: var(--bg-soft);
+  border-left: 4px solid var(--pastel-lavender-strong);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-soft);
+}
+body[data-variant="a"] code {
+  background: var(--bg-code);
+  border-radius: 6px;
+  padding: 0.15em 0.4em;
+  font-size: 0.9em;
+}
+body[data-variant="a"] pre {
+  background: var(--bg-code);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 1.1rem 1.3rem;
+  overflow-x: auto;
+}
+body[data-variant="a"] pre code { background: none; padding: 0; font-size: 0.88em; }
+body[data-variant="a"] table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.2em 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+body[data-variant="a"] th, body[data-variant="a"] td {
+  border: 1px solid var(--border-soft);
+  padding: 0.6em 0.9em;
+  text-align: left;
+}
+body[data-variant="a"] th { background: var(--pastel-blue); }
+body[data-variant="a"] hr {
+  border: none;
+  border-top: 2px dashed var(--pastel-lavender-strong);
+  margin: 2.4em 0;
+}
+body[data-variant="a"] .diagram-wrapper {
+  position: relative;
+  background: var(--bg-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 1.4rem;
+  text-align: center;
+}
+body[data-variant="a"] .diagram-placeholder {
+  border: 1px dashed var(--pastel-lavender-strong);
+  border-radius: var(--radius-md);
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  background: #fff;
+}
+body[data-variant="a"] .diagram-popout {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-size: 0.85em;
+  padding: 0.35em 1em;
+  border-radius: 999px;
+  background: var(--pastel-pink-strong);
+  color: #fff !important;
+  text-decoration: none !important;
+}
+body[data-variant="a"] .tok-keyword { color: #c25fae; }
+body[data-variant="a"] .tok-string { color: #3fa796; }
+body[data-variant="a"] .tok-comment { color: #a3a3b0; font-style: italic; }
+body[data-variant="a"] .tok-function { color: #5b8fd6; }
+
+/* -------------------------------------------------------------------------
+   Variant B — "Minimal Paper": シャドウ・カード無し。パステルは細いアクセント
+   バーとしてのみ使用。余白多め、セリフ寄りの静かな読み物トーン。
+   ------------------------------------------------------------------------- */
+body[data-variant="b"] {
+  --accent-pink: #ff9dbf;
+  --accent-blue: #6fb3e0;
+  --accent-lavender: #a893e8;
+  --text-main: #333333;
+  --text-muted: #8f8f8f;
+  --bg: #fffefc;
+  --bg-code: #f7f7f5;
+  --border: #e6e3dd;
+  background: var(--bg);
+  color: var(--text-main);
+  font-family: var(--font-serif);
+  line-height: 2;
+}
+body[data-variant="b"] .page { max-width: 720px; }
+body[data-variant="b"] h1 {
+  font-size: 2.1rem;
+  font-weight: 600;
+  margin: 0 0 1em;
+  letter-spacing: 0.02em;
+}
+body[data-variant="b"] h2 {
+  font-family: var(--font-system);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 3em 0 1.2em;
+  padding-left: 0.9em;
+  border-left: 3px solid var(--accent-pink);
+  color: var(--text-main);
+}
+body[data-variant="b"] h3 {
+  font-family: var(--font-system);
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 1.8em 0 0.6em;
+}
+body[data-variant="b"] p, body[data-variant="b"] ul, body[data-variant="b"] ol {
+  margin: 1em 0;
+}
+body[data-variant="b"] a {
+  color: var(--text-main);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-blue);
+  text-underline-offset: 3px;
+}
+body[data-variant="b"] blockquote {
+  margin: 1.4em 0;
+  padding: 0.2em 0 0.2em 1.2em;
+  border-left: 3px solid var(--accent-lavender);
+  color: var(--text-muted);
+  font-style: italic;
+}
+body[data-variant="b"] code {
+  font-family: "SFMono-Regular", Consolas, Menlo, monospace;
+  background: var(--bg-code);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+body[data-variant="b"] pre {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.1rem 1.3rem;
+  overflow-x: auto;
+}
+body[data-variant="b"] pre code { background: none; padding: 0; font-size: 0.82em; }
+body[data-variant="b"] table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.4em 0;
+  font-family: var(--font-system);
+  font-size: 0.92em;
+}
+body[data-variant="b"] th, body[data-variant="b"] td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.6em 0.7em;
+  text-align: left;
+}
+body[data-variant="b"] th {
+  border-bottom: 2px solid var(--accent-pink);
+  font-weight: 700;
+}
+body[data-variant="b"] hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3em 0;
+}
+body[data-variant="b"] .diagram-wrapper {
+  padding: 1.5rem 0;
+  text-align: center;
+}
+body[data-variant="b"] .diagram-placeholder {
+  border: 1px solid var(--border);
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-system);
+}
+body[data-variant="b"] .diagram-popout {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-family: var(--font-system);
+  font-size: 0.82em;
+  color: var(--accent-blue) !important;
+}
+body[data-variant="b"] .tok-keyword { color: #b0589d; }
+body[data-variant="b"] .tok-string { color: #4c8f6a; }
+body[data-variant="b"] .tok-comment { color: #a0a0a0; font-style: italic; }
+body[data-variant="b"] .tok-function { color: #4d7fb0; }
+
+/* -------------------------------------------------------------------------
+   Variant C — "Section Banners": H2ごとにフルブリードのグラデーションバンドが
+   入る、区切りの強いスタイル。コードブロックは濃色の「ターミナルカード」。
+   ------------------------------------------------------------------------- */
+body[data-variant="c"] {
+  --pink: #ffb3cf;
+  --pink-strong: #ff6f9c;
+  --blue: #a9d6ff;
+  --blue-strong: #4d9ce0;
+  --lavender: #d3bdfb;
+  --lavender-strong: #9c78ea;
+  --text-main: #3c3550;
+  --text-muted: #8b84a3;
+  --bg: #fffaff;
+  --code-bg: #3c3556;
+  --code-fg: #ece7ff;
+  --radius: 14px;
+  background: var(--bg);
+  color: var(--text-main);
+  line-height: 1.85;
+}
+body[data-variant="c"] .page { padding-left: 0; padding-right: 0; max-width: 900px; }
+body[data-variant="c"] .content-inset { padding: 0 2rem; }
+body[data-variant="c"] h1 {
+  font-size: 2.1rem;
+  margin: 0 0 0.6em;
+  padding: 0 2rem;
+}
+body[data-variant="c"] .lede { padding: 0 2rem; }
+body[data-variant="c"] h2 {
+  font-size: 1.3rem;
+  color: #fff;
+  margin: 2.6em 0 1.2em;
+  padding: 0.9em 2rem;
+  background: linear-gradient(100deg, var(--pink-strong), var(--lavender-strong) 55%, var(--blue-strong));
+  box-shadow: 0 4px 14px rgba(120, 90, 170, 0.22);
+}
+body[data-variant="c"] h2:first-of-type { margin-top: 1.4em; }
+body[data-variant="c"] h3 {
+  font-size: 1.05rem;
+  margin: 1.6em 2rem 0.6em;
+  color: var(--lavender-strong);
+}
+body[data-variant="c"] p, body[data-variant="c"] ul, body[data-variant="c"] ol {
+  margin: 0.9em 0;
+  padding: 0 2rem;
+}
+body[data-variant="c"] a { color: var(--blue-strong); text-decoration: none; font-weight: 600; }
+body[data-variant="c"] a:hover { text-decoration: underline; }
+body[data-variant="c"] blockquote {
+  margin: 1.2em 2rem;
+  padding: 0.8em 1.2em;
+  background: #f7effe;
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  position: relative;
+}
+body[data-variant="c"] blockquote::before {
+  content: "\201C";
+  font-size: 2em;
+  color: var(--lavender-strong);
+  line-height: 0;
+  position: relative;
+  top: 0.3em;
+  margin-right: 0.1em;
+}
+body[data-variant="c"] code {
+  background: #f2ecff;
+  border-radius: 5px;
+  padding: 0.15em 0.4em;
+  font-size: 0.9em;
+  color: #6b4fa0;
+}
+body[data-variant="c"] pre {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  overflow-x: auto;
+  margin: 1.2em 2rem;
+  box-shadow: 0 6px 18px rgba(60, 45, 90, 0.25);
+}
+body[data-variant="c"] pre code { background: none; padding: 0; font-size: 0.88em; color: inherit; }
+body[data-variant="c"] table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: calc(100% - 4rem);
+  margin: 1.2em 2rem;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(120, 90, 170, 0.15);
+}
+body[data-variant="c"] th, body[data-variant="c"] td {
+  padding: 0.65em 0.9em;
+  text-align: left;
+}
+body[data-variant="c"] th {
+  background: linear-gradient(100deg, var(--pink-strong), var(--lavender-strong));
+  color: #fff;
+}
+body[data-variant="c"] td { border-bottom: 1px solid #f0e8ff; }
+body[data-variant="c"] hr { display: none; }
+body[data-variant="c"] .diagram-wrapper {
+  margin: 1.2em 2rem;
+  padding: 1.6rem;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #fdf1ff, #f0f4ff);
+  text-align: center;
+}
+body[data-variant="c"] .diagram-placeholder {
+  border: 2px dashed var(--lavender-strong);
+  border-radius: var(--radius);
+  padding: 2.5rem 1rem;
+  color: var(--text-muted);
+  background: #fff;
+}
+body[data-variant="c"] .diagram-popout {
+  display: inline-block;
+  margin-top: 0.9rem;
+  font-size: 0.85em;
+  padding: 0.4em 1.1em;
+  border-radius: 999px;
+  background: var(--blue-strong);
+  color: #fff !important;
+  text-decoration: none !important;
+}
+body[data-variant="c"] .tok-keyword { color: #ff9dc4; }
+body[data-variant="c"] .tok-string { color: #8fe3c7; }
+body[data-variant="c"] .tok-comment { color: #9d97c0; font-style: italic; }
+body[data-variant="c"] .tok-function { color: #9fc9ff; }
+
+/* -------------------------------------------------------------------------
+   Prototype switcher bar — 本番には出さない (これ自体も破棄対象)
+   ------------------------------------------------------------------------- */
+#proto-switcher {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #1f1f28;
+  color: #fff;
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  font-family: var(--font-system);
+  font-size: 0.85rem;
+  z-index: 999;
+}
+#proto-switcher button {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+#proto-switcher button:hover { background: rgba(255, 255, 255, 0.25); }
+#proto-switcher .label { min-width: 15em; text-align: center; }
+#proto-switcher .tag {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.15em 0.6em;
+  border-radius: 999px;
+  font-size: 0.75em;
+  margin-left: 0.5em;
+}
+</style>
+</head>
+<body data-variant="a">
+<div class="page">
+  <article class="markdown-body">
+    <h1>mdloom Default Theme プレビュー</h1>
+    <div class="lede">
+      <p>
+        これは <strong>mdloom</strong> の Default Theme を検証するためのプロトタイプです。
+        <em>GFM</em> の各要素と Diagram Viewer 導線を、<a href="https://github.com/backpaper0/markserve" onclick="return false;">markserve</a>
+        のトーンを参考にしたパステルカラーで表示します。
+      </p>
+    </div>
+
+    <h2>見出しと段落</h2>
+    <p>
+      Document は単一の Markdown ファイルであり、変換されると Document 本文・Diagram の SVG・Theme が
+      1つの Output ファイルへ埋め込まれます。段落内の <strong>強調(bold)</strong> や
+      <em>強調(italic)</em>、<a href="#" onclick="return false;">リンク</a> の見え方もここで確認します。
+    </p>
+
+    <h3>リスト</h3>
+    <ul>
+      <li>順不同リストの項目1</li>
+      <li>順不同リストの項目2
+        <ul>
+          <li>ネストされた項目</li>
+        </ul>
+      </li>
+      <li>順不同リストの項目3</li>
+    </ul>
+    <ol>
+      <li>番号付きリストの手順1</li>
+      <li>番号付きリストの手順2</li>
+      <li>番号付きリストの手順3</li>
+    </ol>
+
+    <h3>引用</h3>
+    <blockquote>
+      <p>Theme は Output に適用されるフォントと CSS の組であり、変換時に <code>--css</code> / <code>--font</code> で差し替え可能です。</p>
+    </blockquote>
+
+    <h2>コードブロック</h2>
+    <p>シンタックスハイライトは標準搭載され、固定テーマで表示されます。</p>
+    <pre><code><span class="tok-keyword">import</span> { renderMermaid } <span class="tok-keyword">from</span> <span class="tok-string">"@mermaid-js/mermaid-cli"</span>;
+
+<span class="tok-comment">// Document を Output へ変換する</span>
+<span class="tok-keyword">async function</span> <span class="tok-function">convert</span>(input: <span class="tok-keyword">string</span>): <span class="tok-keyword">Promise</span>&lt;<span class="tok-keyword">string</span>&gt; {
+  <span class="tok-keyword">const</span> html = <span class="tok-keyword">await</span> <span class="tok-function">renderToHtml</span>(input);
+  <span class="tok-keyword">return</span> html;
+}</code></pre>
+
+    <h2>テーブル</h2>
+    <table>
+      <thead>
+        <tr><th>オプション</th><th>説明</th><th>デフォルト</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>--css</code></td><td>Theme の CSS を差し替える</td><td>Default Theme 同梱 CSS</td></tr>
+        <tr><td><code>--font</code></td><td>Theme のフォントを差し替える</td><td>システムフォントスタック</td></tr>
+        <tr><td><code>mdloom css</code></td><td>デフォルト CSS を stdout へ出力</td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <h2>Diagram</h2>
+    <p>Mermaid 記法で書かれた図は変換時に SVG 化され、Output に埋め込まれます。クリックすると Diagram Viewer が別タブで開きます。</p>
+    <div class="diagram-wrapper">
+      <div class="diagram-placeholder">[ Diagram SVG プレースホルダ ]</div>
+      <br>
+      <a class="diagram-popout" href="#" onclick="return false;">Diagram Viewerで開く ↗</a>
+    </div>
+  </article>
+</div>
+
+<div id="proto-switcher">
+  <button id="prev" aria-label="前のバリアント">←</button>
+  <span class="label" id="label"></span>
+  <button id="next" aria-label="次のバリアント">→</button>
+</div>
+
+<script>
+(function () {
+  var variants = [
+    { key: "a", name: "Card Stack" },
+    { key: "b", name: "Minimal Paper" },
+    { key: "c", name: "Section Banners" }
+  ];
+
+  function currentIndex() {
+    var params = new URLSearchParams(location.search);
+    var v = params.get("variant") || "a";
+    var idx = variants.findIndex(function (x) { return x.key === v; });
+    return idx === -1 ? 0 : idx;
+  }
+
+  function apply(idx) {
+    var v = variants[idx];
+    document.body.dataset.variant = v.key;
+    document.getElementById("label").textContent = v.key.toUpperCase() + " (" + v.name + ")";
+    try {
+      var params = new URLSearchParams(location.search);
+      params.set("variant", v.key);
+      history.replaceState(null, "", location.pathname + "?" + params.toString());
+    } catch (e) { /* file:// では失敗する場合がある。無視して続行 */ }
+  }
+
+  var idx = currentIndex();
+  apply(idx);
+
+  document.getElementById("prev").addEventListener("click", function () {
+    idx = (idx - 1 + variants.length) % variants.length;
+    apply(idx);
+  });
+  document.getElementById("next").addEventListener("click", function () {
+    idx = (idx + 1) % variants.length;
+    apply(idx);
+  });
+  document.addEventListener("keydown", function (e) {
+    var el = document.activeElement;
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+    if (e.key === "ArrowLeft") { idx = (idx - 1 + variants.length) % variants.length; apply(idx); }
+    if (e.key === "ArrowRight") { idx = (idx + 1) % variants.length; apply(idx); }
+  });
+})();
+</script>
+</body>
+</html>
