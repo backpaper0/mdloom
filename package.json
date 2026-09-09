@@ -1,0 +1,32 @@
+{
+  "name": "mdloom",
+  "version": "0.1.0",
+  "description": "Convert a single Markdown file into a single, good-looking, GFM-compliant HTML file",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "mdloom": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.12",
+    "@types/node": "26.5.0",
+    "tsup": "8.5.1",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
