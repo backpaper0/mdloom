@@ -1,10 +1,13 @@
 import { DIAGRAM_VIEWER_SCRIPT } from "./diagram-viewer.js";
+import { SOURCE_VIEWER_SCRIPT } from "./source-viewer.js";
 
 export interface BuildHtmlDocumentOptions {
   /** Used as the Output's `<title>`. */
   readonly title: string;
   /** The converted Document body (from `convertMarkdownToHtml`). */
   readonly contentHtml: string;
+  /** The Document's raw Markdown text, embedded for the Source Viewer. */
+  readonly markdownSource: string;
   /** Theme CSS: the Default Theme, or the `--css` override, verbatim. */
   readonly css: string;
   /**
@@ -27,6 +30,7 @@ export function buildHtmlDocument({
   contentHtml,
   css,
   fontCss,
+  markdownSource,
 }: BuildHtmlDocumentOptions): string {
   const style = fontCss ? `${css}\n${fontCss}` : css;
 
@@ -40,11 +44,16 @@ ${style}
 </style>
 </head>
 <body>
+<div class="mdloom-toolbar">
+<button type="button" id="mdloom-source-viewer-trigger" class="mdloom-source-viewer-trigger">Markdownソースを表示</button>
+</div>
 <div class="markdown-body">
 ${contentHtml}
 </div>
+<div id="mdloom-source" hidden>${escapeHtml(markdownSource)}</div>
 <script>
 ${DIAGRAM_VIEWER_SCRIPT}
+${SOURCE_VIEWER_SCRIPT}
 </script>
 </body>
 </html>

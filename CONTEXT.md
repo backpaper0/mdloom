@@ -20,6 +20,10 @@ _Avoid_: チャート、図表
 Output内でDiagramを開くと別タブで表示される、拡大閲覧専用のビュー。
 _Avoid_: プレビュー、ポップアップ
 
+**Source Viewer**:
+Output内のボタンから開くと、DocumentのMarkdownソースを別タブでプレーンテキスト表示する専用のビュー。Diagram Viewerと同じくOutput内で完結し、外部アセットに依存しない。
+_Avoid_: プレビュー、ポップアップ
+
 **Theme**:
 Outputに適用されるフォントとCSSの組。変換時に差し替え可能。
 _Avoid_: スタイル、スキン

@@ -53,7 +53,13 @@ export async function run(argv: readonly string[]): Promise<number> {
       : undefined;
     const title = basename(input, extname(input));
 
-    const html = buildHtmlDocument({ title, contentHtml, css, fontCss });
+    const html = buildHtmlDocument({
+      title,
+      contentHtml,
+      css,
+      fontCss,
+      markdownSource: markdown,
+    });
     await writeFile(values.output, html, "utf-8");
     return 0;
   } catch (error) {

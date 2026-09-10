@@ -7,6 +7,7 @@ describe("buildHtmlDocument", () => {
       title: "My Doc",
       contentHtml: "<h1>Hello</h1>",
       css: ".markdown-body { color: red; }",
+      markdownSource: "# Hello",
     });
 
     expect(html).toContain("<title>My Doc</title>");
@@ -21,6 +22,7 @@ describe("buildHtmlDocument", () => {
       title: "<script>alert(1)</script>",
       contentHtml: "",
       css: "",
+      markdownSource: "",
     });
 
     expect(html).toContain(
@@ -35,6 +37,7 @@ describe("buildHtmlDocument", () => {
       css: "body { font-family: system-ui; }",
       fontCss:
         "@font-face { font-family: Custom; src: url(data:font/woff2;base64,AAA); }",
+      markdownSource: "",
     });
 
     const cssIndex = html.indexOf("font-family: system-ui");
@@ -44,8 +47,38 @@ describe("buildHtmlDocument", () => {
   });
 
   it("omits nothing extra when fontCss is absent", () => {
-    const html = buildHtmlDocument({ title: "t", contentHtml: "", css: "" });
+    const html = buildHtmlDocument({
+      title: "t",
+      contentHtml: "",
+      css: "",
+      markdownSource: "",
+    });
 
     expect(html).not.toContain("undefined");
+  });
+
+  it("embeds the Source Viewer trigger and script", () => {
+    const html = buildHtmlDocument({
+      title: "t",
+      contentHtml: "",
+      css: "",
+      markdownSource: "# Hello",
+    });
+
+    expect(html).toContain('id="mdloom-source-viewer-trigger"');
+    expect(html).toContain('getElementById("mdloom-source-viewer-trigger")');
+  });
+
+  it("embeds the raw markdown source, HTML-escaped, for the Source Viewer to read", () => {
+    const html = buildHtmlDocument({
+      title: "t",
+      contentHtml: "",
+      css: "",
+      markdownSource: "# Hi <b>&</b>\n\nsome `code`",
+    });
+
+    expect(html).toContain(
+      '<div id="mdloom-source" hidden># Hi &lt;b&gt;&amp;&lt;/b&gt;\n\nsome `code`</div>',
+    );
   });
 });

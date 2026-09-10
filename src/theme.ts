@@ -272,4 +272,29 @@ html, body {
   font-size: 0.8em;
   color: var(--pastel-heading);
 }
+
+/* Source Viewer への導線 (CONTEXT.md: Source Viewer) */
+.mdloom-toolbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.2rem 3rem 0;
+  text-align: right;
+}
+
+.mdloom-source-viewer-trigger {
+  font: inherit;
+  font-size: 0.85em;
+  color: var(--pastel-heading);
+  background: var(--pastel-quote-bg);
+  border: 1px solid var(--pastel-border);
+  border-radius: 8px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+.mdloom-source-viewer-trigger:hover,
+.mdloom-source-viewer-trigger:focus-visible {
+  box-shadow: 0 4px 14px var(--pastel-shadow);
+  outline: none;
+}
 `;

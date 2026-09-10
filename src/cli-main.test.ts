@@ -40,6 +40,7 @@ describe("run", () => {
     expect(html).toContain("<title>doc</title>");
     expect(html).toContain("<h1>Hello</h1>");
     expect(html).toContain(DEFAULT_THEME_CSS);
+    expect(html).toContain('<div id="mdloom-source" hidden># Hello');
   });
 
   it("uses a custom --css file in place of the Default Theme", async () => {
