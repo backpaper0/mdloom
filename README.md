@@ -23,6 +23,24 @@ npm install github:backpaper0/mdloom
 npx github:backpaper0/mdloom <input.md> -o <output.html>
 ```
 
+## Getting Started
+
+リポジトリに同梱されている`examples/example.md`をDocumentとして変換すると、GFM記法やMermaid記法・Vega/Vega-Lite仕様のDiagramがOutputへ正しく埋め込まれる様子をすぐに確認できます。
+
+```sh
+git clone https://github.com/backpaper0/mdloom.git
+cd mdloom
+npx mdloom examples/example.md -o example.html
+```
+
+生成された`example.html`をブラウザで開いてください。
+
+- テキスト装飾・リスト・表などのGFM記法がHTMLへ変換されていること
+- フローチャートやシーケンス図(Mermaid記法)、棒グラフや円グラフ(Vega/Vega-Lite仕様)のDiagramがOutputへ埋め込まれていること(クリックするとDiagram Viewerで別タブ表示されます)
+- 「Markdownソースを表示」ボタンから、DocumentのMarkdownソースがSource Viewerで別タブ表示されること
+
+が確認できれば、変換は正しく行われています。
+
 ## 使い方
 
 ```sh
