@@ -9,7 +9,9 @@
  *
  * The Blob is typed `text/plain` (not `text/markdown`): browsers reliably
  * render `text/plain` inline, while less common text subtypes risk a
- * download prompt in some browsers instead of inline display.
+ * download prompt in some browsers instead of inline display. `charset=utf-8`
+ * is explicit because a `text/plain` Blob with no charset falls back to a
+ * platform-dependent default encoding, garbling non-ASCII source text.
  */
 export const SOURCE_VIEWER_SCRIPT = `(function () {
   var trigger = document.getElementById("mdloom-source-viewer-trigger");
@@ -18,7 +20,7 @@ export const SOURCE_VIEWER_SCRIPT = `(function () {
     return;
   }
   trigger.addEventListener("click", function () {
-    var blob = new Blob([source.textContent], { type: "text/plain" });
+    var blob = new Blob([source.textContent], { type: "text/plain;charset=utf-8" });
     var url = URL.createObjectURL(blob);
     window.open(url, "_blank");
     setTimeout(function () {
