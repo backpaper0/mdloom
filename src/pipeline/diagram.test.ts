@@ -12,7 +12,7 @@ vi.mock("@mermaid-js/mermaid-cli", () => ({
   renderMermaid: renderMermaidMock,
 }));
 
-const { renderDiagrams } = await import("./diagram.js");
+const { renderDiagrams, renderVegaDiagrams } = await import("./diagram.js");
 
 describe("renderDiagrams", () => {
   beforeEach(() => {
@@ -76,5 +76,84 @@ describe("renderDiagrams", () => {
       renderDiagrams([{ id: "a", definition: "not mermaid" }]),
     ).rejects.toThrow("invalid diagram");
     expect(closeMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("renderVegaDiagrams", () => {
+  it("renders a vega-lite spec to an SVG string keyed by request id", async () => {
+    const spec = JSON.stringify({
+      $schema: "https://vega.github.io/schema/vega-lite/v6.json",
+      data: { values: [{ a: "A", b: 1 }] },
+      mark: "bar",
+      encoding: {
+        x: { field: "a", type: "nominal" },
+        y: { field: "b", type: "quantitative" },
+      },
+    });
+
+    const result = await renderVegaDiagrams([
+      { id: "a", definition: spec, notation: "vega-lite" },
+    ]);
+
+    const svg = result.get("a");
+    expect(svg).toBeDefined();
+    expect(svg).toContain("<svg");
+    expect(svg).toContain("</svg>");
+  });
+
+  it("renders a raw vega spec without compiling it as vega-lite", async () => {
+    const spec = JSON.stringify({
+      $schema: "https://vega.github.io/schema/vega/v6.json",
+      width: 100,
+      height: 100,
+      marks: [],
+    });
+
+    const result = await renderVegaDiagrams([
+      { id: "a", definition: spec, notation: "vega" },
+    ]);
+
+    const svg = result.get("a");
+    expect(svg).toContain("<svg");
+    expect(svg).toContain("</svg>");
+  });
+
+  it("renders each request and keys the result by request id", async () => {
+    const barSpec = JSON.stringify({
+      $schema: "https://vega.github.io/schema/vega-lite/v6.json",
+      data: { values: [{ a: "A", b: 1 }] },
+      mark: "bar",
+      encoding: {
+        x: { field: "a", type: "nominal" },
+        y: { field: "b", type: "quantitative" },
+      },
+    });
+    const rawSpec = JSON.stringify({
+      $schema: "https://vega.github.io/schema/vega/v6.json",
+      width: 50,
+      height: 50,
+      marks: [],
+    });
+
+    const result = await renderVegaDiagrams([
+      { id: "a", definition: barSpec, notation: "vega-lite" },
+      { id: "b", definition: rawSpec, notation: "vega" },
+    ]);
+
+    expect(result.get("a")).toContain("<svg");
+    expect(result.get("b")).toContain("<svg");
+  });
+
+  it("rejects when the spec is invalid", async () => {
+    const spec = JSON.stringify({
+      $schema: "https://vega.github.io/schema/vega-lite/v6.json",
+      mark: "not-a-real-mark",
+    });
+
+    await expect(
+      renderVegaDiagrams([
+        { id: "a", definition: spec, notation: "vega-lite" },
+      ]),
+    ).rejects.toThrow();
   });
 });

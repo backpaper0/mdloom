@@ -13,7 +13,7 @@ _Avoid_: ソースファイル、入力ファイル
 _Avoid_: 成果物、生成物
 
 **Diagram**:
-Document中にMermaid記法で書かれた図。変換時にSVG化され、Outputへ埋め込まれる。
+Document中にMermaid記法、またはVega/Vega-Lite仕様で書かれた図。変換時にSVG化され、Outputへ埋め込まれる。
 _Avoid_: チャート、図表
 
 **Diagram Viewer**:

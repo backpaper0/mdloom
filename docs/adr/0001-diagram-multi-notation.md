@@ -1,0 +1,7 @@
+# Diagramの記法をMermaid単一から複数記法対応へ拡張する
+
+これまでDiagramはMermaid記法限定の概念だったが、Vega/Vega-Lite仕様で書かれた図もSVG化してOutputへ埋め込みたいという要望を受け、「チャート」という別概念を新設するのではなく、既存のDiagram概念自体をMermaid/Vega/Vega-Lite複数記法対応へ拡張することにした。Diagram Viewerや`mdloom-diagram`といった表示・拡大閲覧の仕組みは記法によらず共用できるため、そのまま流用する。一方でSVG化の実装はMermaid(headless Chromiumを起動・使い回すmermaid-cli)とVega/Vega-Lite(ブラウザ不要でvega/vega-liteパッケージのみ)とで技術的性質が大きく異なるため、内部のレンダラーは記法ごとに別関数として分離し、変換パイプライン側で束ねる。
+
+## Consequences
+
+ユーザー視点では「Diagram」はひとつの概念のまま対応記法だけが増える。将来さらに別の記法を追加する場合も、同じレンダラー分離パターンに従う。

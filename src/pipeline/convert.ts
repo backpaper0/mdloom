@@ -5,10 +5,17 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import { visit } from "unist-util-visit";
-import { type DiagramRequest, renderDiagrams } from "./diagram.js";
+import {
+  type DiagramRequest,
+  renderDiagrams,
+  renderVegaDiagrams,
+  type VegaDiagramRequest,
+} from "./diagram.js";
 import { highlightCode } from "./highlight.js";
 
 const MERMAID_LANG = "mermaid";
+const VEGA_LANG = "vega";
+const VEGA_LITE_LANG = "vega-lite";
 
 interface PendingCodeBlock {
   readonly marker: string;
@@ -17,10 +24,11 @@ interface PendingCodeBlock {
 }
 
 /**
- * Converts a single Markdown document (GFM) into an HTML fragment: Mermaid
- * fences become inline SVG, other fenced code blocks become Shiki-highlighted
- * `<pre>` blocks. The result is the converted content only — wrapping it in a
- * full document with a Theme and Diagram Viewer is out of scope here.
+ * Converts a single Markdown document (GFM) into an HTML fragment: Mermaid,
+ * Vega, and Vega-Lite fences become inline SVG, other fenced code blocks
+ * become Shiki-highlighted `<pre>` blocks. The result is the converted
+ * content only — wrapping it in a full document with a Theme and Diagram
+ * Viewer is out of scope here.
  */
 export async function convertMarkdownToHtml(markdown: string): Promise<string> {
   const tree = unified()
@@ -29,6 +37,7 @@ export async function convertMarkdownToHtml(markdown: string): Promise<string> {
     .parse(markdown) as MdastRoot;
 
   const diagramRequests: DiagramRequest[] = [];
+  const vegaRequests: VegaDiagramRequest[] = [];
   const pendingCodeBlocks: PendingCodeBlock[] = [];
   let diagramIndex = 0;
   let codeIndex = 0;
@@ -37,6 +46,11 @@ export async function convertMarkdownToHtml(markdown: string): Promise<string> {
     if (node.lang === MERMAID_LANG) {
       const marker = `mdloom-diagram-${diagramIndex++}`;
       diagramRequests.push({ id: marker, definition: node.value });
+      node.data = { hName: "div", hProperties: { className: [], id: marker } };
+    } else if (node.lang === VEGA_LANG || node.lang === VEGA_LITE_LANG) {
+      const marker = `mdloom-diagram-${diagramIndex++}`;
+      const notation = node.lang === VEGA_LITE_LANG ? "vega-lite" : "vega";
+      vegaRequests.push({ id: marker, definition: node.value, notation });
       node.data = { hName: "div", hProperties: { className: [], id: marker } };
     } else {
       const marker = `mdloom-code-${codeIndex++}`;
@@ -50,6 +64,7 @@ export async function convertMarkdownToHtml(markdown: string): Promise<string> {
   });
 
   const diagramSvgs = await renderDiagrams(diagramRequests);
+  const vegaSvgs = await renderVegaDiagrams(vegaRequests);
   const codeHtml = new Map<string, string>();
   for (const { marker, code, lang } of pendingCodeBlocks) {
     codeHtml.set(marker, await highlightCode(code, lang));
@@ -58,8 +73,8 @@ export async function convertMarkdownToHtml(markdown: string): Promise<string> {
   const hastTree = unified().use(remarkRehype).runSync(tree);
   let html = unified().use(rehypeStringify).stringify(hastTree);
 
-  for (const { id } of diagramRequests) {
-    const svg = diagramSvgs.get(id);
+  for (const { id } of [...diagramRequests, ...vegaRequests]) {
+    const svg = diagramSvgs.get(id) ?? vegaSvgs.get(id);
     if (svg === undefined) {
       throw new Error(
         `mdloom: missing rendered diagram for placeholder "${id}"`,

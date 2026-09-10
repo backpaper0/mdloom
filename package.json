@@ -40,6 +40,8 @@
     "remark-rehype": "^11.1.2",
     "shiki": "^4.4.3",
     "unified": "^11.0.5",
-    "unist-util-visit": "^5.1.0"
+    "unist-util-visit": "^5.1.0",
+    "vega": "^6.4.0",
+    "vega-lite": "^6.4.3"
   }
 }

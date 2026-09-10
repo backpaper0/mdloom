@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { DiagramRequest } from "./diagram.js";
+import type { DiagramRequest, VegaDiagramRequest } from "./diagram.js";
 
 const renderDiagramsMock = vi.fn(
   async (requests: readonly DiagramRequest[]) => {
@@ -11,8 +11,22 @@ const renderDiagramsMock = vi.fn(
   },
 );
 
+const renderVegaDiagramsMock = vi.fn(
+  async (requests: readonly VegaDiagramRequest[]) => {
+    const result = new Map<string, string>();
+    for (const { id, definition, notation } of requests) {
+      result.set(
+        id,
+        `<svg data-notation="${notation}" data-definition="${definition}"></svg>`,
+      );
+    }
+    return result;
+  },
+);
+
 vi.mock("./diagram.js", () => ({
   renderDiagrams: renderDiagramsMock,
+  renderVegaDiagrams: renderVegaDiagramsMock,
 }));
 
 const { convertMarkdownToHtml } = await import("./convert.js");
@@ -20,6 +34,7 @@ const { convertMarkdownToHtml } = await import("./convert.js");
 describe("convertMarkdownToHtml", () => {
   beforeEach(() => {
     renderDiagramsMock.mockClear();
+    renderVegaDiagramsMock.mockClear();
   });
 
   it("converts plain GFM markdown", async () => {
@@ -59,6 +74,60 @@ describe("convertMarkdownToHtml", () => {
       '<div class="mdloom-diagram"><svg data-definition="graph TD; A-->B;"></svg></div>',
     );
     expect(html).not.toContain("mermaid");
+  });
+
+  it("replaces a vega-lite fence with the rendered diagram", async () => {
+    const html = await convertMarkdownToHtml(
+      '```vega-lite\n{"mark":"bar"}\n```\n',
+    );
+
+    expect(renderVegaDiagramsMock).toHaveBeenCalledWith([
+      {
+        id: "mdloom-diagram-0",
+        definition: '{"mark":"bar"}',
+        notation: "vega-lite",
+      },
+    ]);
+    expect(html).toContain(
+      '<div class="mdloom-diagram"><svg data-notation="vega-lite" data-definition="{"mark":"bar"}"></svg></div>',
+    );
+  });
+
+  it("replaces a vega fence with the rendered diagram", async () => {
+    const html = await convertMarkdownToHtml('```vega\n{"marks":[]}\n```\n');
+
+    expect(renderVegaDiagramsMock).toHaveBeenCalledWith([
+      { id: "mdloom-diagram-0", definition: '{"marks":[]}', notation: "vega" },
+    ]);
+    expect(html).toContain(
+      '<div class="mdloom-diagram"><svg data-notation="vega" data-definition="{"marks":[]}"></svg></div>',
+    );
+  });
+
+  it("shares one placeholder index across mermaid, vega, and vega-lite fences", async () => {
+    const markdown = [
+      "```mermaid",
+      "graph TD; A-->B;",
+      "```",
+      "",
+      "```vega-lite",
+      '{"mark":"bar"}',
+      "```",
+      "",
+    ].join("\n");
+
+    await convertMarkdownToHtml(markdown);
+
+    expect(renderDiagramsMock).toHaveBeenCalledWith([
+      { id: "mdloom-diagram-0", definition: "graph TD; A-->B;" },
+    ]);
+    expect(renderVegaDiagramsMock).toHaveBeenCalledWith([
+      {
+        id: "mdloom-diagram-1",
+        definition: '{"mark":"bar"}',
+        notation: "vega-lite",
+      },
+    ]);
   });
 
   it("keeps document order and distinct placeholders across mixed blocks", async () => {
