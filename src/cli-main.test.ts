@@ -73,6 +73,39 @@ describe("run", () => {
     expect(html).toContain("@font-face { font-family: Custom; }");
   });
 
+  it("embeds a local Image referenced relative to the input file, regardless of cwd", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    const bytes = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64",
+    );
+    await writeFile(join(dir, "photo.png"), bytes);
+    await writeFile(input, "![a photo](photo.png)\n", "utf-8");
+
+    const exitCode = await run([input, "-o", output]);
+
+    expect(exitCode).toBe(0);
+    const html = await readFile(output, "utf-8");
+    expect(html).toContain(`data:image/png;base64,${bytes.toString("base64")}`);
+    expect(html).toContain('class="mdloom-image"');
+  });
+
+  it("fails when a referenced local image is missing", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    await writeFile(input, "![missing](missing.png)\n", "utf-8");
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const exitCode = await run([input, "-o", output]);
+
+    expect(exitCode).toBe(1);
+    expect(error).toHaveBeenCalledWith(
+      expect.stringContaining('failed to read image "missing.png"'),
+    );
+    error.mockRestore();
+  });
+
   it("fails with a usage message when -o is missing", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
 

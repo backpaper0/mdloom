@@ -1,6 +1,6 @@
 # mdloom サンプルDocument
 
-このDocumentは、mdloomによるMarkdown記法からHTMLへの変換、およびMermaid記法・Vega/Vega-Lite仕様のDiagramがOutputへ正しく埋め込まれることを確認するためのサンプルです。
+このDocumentは、mdloomによるMarkdown記法からHTMLへの変換、Mermaid記法・Vega/Vega-Lite仕様のDiagram、およびローカルImageがOutputへ正しく埋め込まれることを確認するためのサンプルです。
 
 ```sh
 mdloom examples/example.md -o example.html
@@ -19,6 +19,7 @@ mdloom examples/example.md -o example.html
 - Markdown記法からHTMLへの変換
 - Mermaid記法によるDiagram
 - Vega / Vega-Lite仕様によるDiagram
+- ローカルファイルのImage
 
 順序付きリスト:
 
@@ -31,6 +32,7 @@ mdloom examples/example.md -o example.html
 - [x] GFM記法のHTML変換を確認する
 - [x] Mermaid記法のDiagramを確認する
 - [ ] Vega / Vega-Lite仕様のDiagramを確認する
+- [ ] ローカルImageの埋め込みを確認する
 
 ### 表
 
@@ -53,6 +55,12 @@ export function greet(name: string): string {
 ### 水平線
 
 ---
+
+## Imageの埋め込み
+
+`![alt](path)`でDocumentから相対パス参照したローカル画像ファイルは、変換時にdata URIへ変換されOutputへ埋め込まれます。クリックするとImage Viewerが別タブで開きます。
+
+![mdloomのロゴ](./assets/mdloom-logo.png)
 
 ## Mermaid記法のDiagram
 

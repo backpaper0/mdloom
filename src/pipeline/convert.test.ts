@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DiagramRequest, VegaDiagramRequest } from "./diagram.js";
 
 const renderDiagramsMock = vi.fn(
@@ -32,13 +35,23 @@ vi.mock("./diagram.js", () => ({
 const { convertMarkdownToHtml } = await import("./convert.js");
 
 describe("convertMarkdownToHtml", () => {
-  beforeEach(() => {
+  let dir: string;
+
+  beforeEach(async () => {
     renderDiagramsMock.mockClear();
     renderVegaDiagramsMock.mockClear();
+    dir = await mkdtemp(join(tmpdir(), "mdloom-convert-"));
+  });
+
+  afterEach(async () => {
+    await rm(dir, { recursive: true, force: true });
   });
 
   it("converts plain GFM markdown", async () => {
-    const html = await convertMarkdownToHtml("# Title\n\nHello **world**.\n");
+    const html = await convertMarkdownToHtml(
+      "# Title\n\nHello **world**.\n",
+      dir,
+    );
 
     expect(html).toContain("<h1>Title</h1>");
     expect(html).toContain("<strong>world</strong>");
@@ -47,6 +60,7 @@ describe("convertMarkdownToHtml", () => {
   it("renders GFM tables, task lists, and strikethrough", async () => {
     const html = await convertMarkdownToHtml(
       "| a | b |\n| - | - |\n| 1 | 2 |\n\n- [x] done\n- [ ] todo\n\n~~gone~~\n",
+      dir,
     );
 
     expect(html).toContain("<table>");
@@ -55,7 +69,7 @@ describe("convertMarkdownToHtml", () => {
   });
 
   it("replaces a non-mermaid fenced code block with highlighted output", async () => {
-    const html = await convertMarkdownToHtml("```ts\nconst x = 1;\n```\n");
+    const html = await convertMarkdownToHtml("```ts\nconst x = 1;\n```\n", dir);
 
     expect(html).toContain('<pre class="shiki');
     expect(html).not.toContain("mdloom-code-0");
@@ -65,6 +79,7 @@ describe("convertMarkdownToHtml", () => {
   it("replaces a mermaid fence with the rendered diagram", async () => {
     const html = await convertMarkdownToHtml(
       "```mermaid\ngraph TD; A-->B;\n```\n",
+      dir,
     );
 
     expect(renderDiagramsMock).toHaveBeenCalledWith([
@@ -79,6 +94,7 @@ describe("convertMarkdownToHtml", () => {
   it("replaces a vega-lite fence with the rendered diagram", async () => {
     const html = await convertMarkdownToHtml(
       '```vega-lite\n{"mark":"bar"}\n```\n',
+      dir,
     );
 
     expect(renderVegaDiagramsMock).toHaveBeenCalledWith([
@@ -94,7 +110,10 @@ describe("convertMarkdownToHtml", () => {
   });
 
   it("replaces a vega fence with the rendered diagram", async () => {
-    const html = await convertMarkdownToHtml('```vega\n{"marks":[]}\n```\n');
+    const html = await convertMarkdownToHtml(
+      '```vega\n{"marks":[]}\n```\n',
+      dir,
+    );
 
     expect(renderVegaDiagramsMock).toHaveBeenCalledWith([
       { id: "mdloom-diagram-0", definition: '{"marks":[]}', notation: "vega" },
@@ -116,7 +135,7 @@ describe("convertMarkdownToHtml", () => {
       "",
     ].join("\n");
 
-    await convertMarkdownToHtml(markdown);
+    await convertMarkdownToHtml(markdown, dir);
 
     expect(renderDiagramsMock).toHaveBeenCalledWith([
       { id: "mdloom-diagram-0", definition: "graph TD; A-->B;" },
@@ -148,7 +167,7 @@ describe("convertMarkdownToHtml", () => {
       "",
     ].join("\n");
 
-    const html = await convertMarkdownToHtml(markdown);
+    const html = await convertMarkdownToHtml(markdown, dir);
 
     const introIndex = html.indexOf("Intro paragraph.");
     const firstDiagramIndex = html.indexOf('data-definition="graph TD; A-->B;');
@@ -161,5 +180,37 @@ describe("convertMarkdownToHtml", () => {
     expect(firstDiagramIndex).toBeGreaterThan(introIndex);
     expect(codeIndex).toBeGreaterThan(firstDiagramIndex);
     expect(secondDiagramIndex).toBeGreaterThan(codeIndex);
+  });
+
+  it("embeds a local image as a data URI on an .mdloom-image img", async () => {
+    const bytes = Buffer.from(
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+      "base64",
+    );
+    await writeFile(join(dir, "photo.png"), bytes);
+
+    const html = await convertMarkdownToHtml("![a photo](photo.png)\n", dir);
+
+    expect(html).toContain(
+      `<img src="data:image/png;base64,${bytes.toString("base64")}" alt="a photo" class="mdloom-image">`,
+    );
+  });
+
+  it("leaves a remote image URL untouched and without the mdloom-image class", async () => {
+    const html = await convertMarkdownToHtml(
+      "![remote](https://example.com/a.png)\n",
+      dir,
+    );
+
+    expect(html).toContain(
+      '<img src="https://example.com/a.png" alt="remote">',
+    );
+    expect(html).not.toContain("mdloom-image");
+  });
+
+  it("fails the build when a local image file is missing", async () => {
+    await expect(
+      convertMarkdownToHtml("![missing](missing.png)\n", dir),
+    ).rejects.toThrow(/failed to read image "missing.png"/);
   });
 });

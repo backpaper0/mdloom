@@ -220,6 +220,17 @@ html, body {
   box-shadow: 0 6px 20px var(--pastel-shadow);
 }
 
+/* Image Viewer への導線 (CONTEXT.md: Image / Image Viewer) */
+.mdloom-image {
+  cursor: zoom-in;
+}
+
+.mdloom-image:hover,
+.mdloom-image:focus-visible {
+  box-shadow: 0 8px 24px var(--pastel-shadow);
+  outline: none;
+}
+
 /* Task lists */
 .markdown-body input[type="checkbox"] {
   accent-color: var(--pastel-accent);

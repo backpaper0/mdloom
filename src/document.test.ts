@@ -69,6 +69,17 @@ describe("buildHtmlDocument", () => {
     expect(html).toContain('getElementById("mdloom-source-viewer-trigger")');
   });
 
+  it("embeds the Image Viewer script", () => {
+    const html = buildHtmlDocument({
+      title: "t",
+      contentHtml: "",
+      css: "",
+      markdownSource: "",
+    });
+
+    expect(html).toContain('querySelectorAll(".mdloom-image")');
+  });
+
   it("embeds the raw markdown source, HTML-escaped, for the Source Viewer to read", () => {
     const html = buildHtmlDocument({
       title: "t",

@@ -9,7 +9,7 @@
 _Avoid_: ソースファイル、入力ファイル
 
 **Output**:
-変換によって生成される単一のHTMLファイル。DocumentのMarkdown本文とDiagramのSVG、Themeが1ファイルに埋め込まれている。
+変換によって生成される単一のHTMLファイル。DocumentのMarkdown本文とDiagramのSVG、Imageのdata URI、Themeが1ファイルに埋め込まれている。
 _Avoid_: 成果物、生成物
 
 **Diagram**:
@@ -22,6 +22,14 @@ _Avoid_: プレビュー、ポップアップ
 
 **Source Viewer**:
 Output内のボタンから開くと、DocumentのMarkdownソースを別タブでプレーンテキスト表示する専用のビュー。Diagram Viewerと同じくOutput内で完結し、外部アセットに依存しない。
+_Avoid_: プレビュー、ポップアップ
+
+**Image**:
+Document中に`![alt](path)`で参照されるローカル画像ファイル。変換時にdata URIへ変換され、Outputへ埋め込まれる。
+_Avoid_: 画像ファイル、アセット
+
+**Image Viewer**:
+Output内でImageを開くと別タブで表示される、拡大閲覧専用のビュー。Diagram Viewer・Source Viewerと同じくOutput内で完結し、外部アセットに依存しない。
 _Avoid_: プレビュー、ポップアップ
 
 **Theme**:

@@ -1,4 +1,4 @@
-import type { Code, Root as MdastRoot } from "mdast";
+import type { Code, Image, Root as MdastRoot } from "mdast";
 import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
 import remarkParse from "remark-parse";
@@ -12,6 +12,7 @@ import {
   type VegaDiagramRequest,
 } from "./diagram.js";
 import { highlightCode } from "./highlight.js";
+import { embedImage } from "./image.js";
 
 const MERMAID_LANG = "mermaid";
 const VEGA_LANG = "vega";
@@ -26,11 +27,15 @@ interface PendingCodeBlock {
 /**
  * Converts a single Markdown document (GFM) into an HTML fragment: Mermaid,
  * Vega, and Vega-Lite fences become inline SVG, other fenced code blocks
- * become Shiki-highlighted `<pre>` blocks. The result is the converted
- * content only — wrapping it in a full document with a Theme and Diagram
- * Viewer is out of scope here.
+ * become Shiki-highlighted `<pre>` blocks, and local Images become embedded
+ * `data:` URIs (see `image.ts`) resolved against `baseDir`. The result is
+ * the converted content only — wrapping it in a full document with a Theme,
+ * Diagram Viewer, and Image Viewer is out of scope here.
  */
-export async function convertMarkdownToHtml(markdown: string): Promise<string> {
+export async function convertMarkdownToHtml(
+  markdown: string,
+  baseDir: string,
+): Promise<string> {
   const tree = unified()
     .use(remarkParse)
     .use(remarkGfm)
@@ -39,8 +44,13 @@ export async function convertMarkdownToHtml(markdown: string): Promise<string> {
   const diagramRequests: DiagramRequest[] = [];
   const vegaRequests: VegaDiagramRequest[] = [];
   const pendingCodeBlocks: PendingCodeBlock[] = [];
+  const imageNodes: Image[] = [];
   let diagramIndex = 0;
   let codeIndex = 0;
+
+  visit(tree, "image", (node: Image) => {
+    imageNodes.push(node);
+  });
 
   visit(tree, "code", (node: Code) => {
     if (node.lang === MERMAID_LANG) {
@@ -62,6 +72,14 @@ export async function convertMarkdownToHtml(markdown: string): Promise<string> {
       node.data = { hName: "div", hProperties: { className: [], id: marker } };
     }
   });
+
+  for (const node of imageNodes) {
+    const originalUrl = node.url;
+    node.url = await embedImage(originalUrl, baseDir);
+    if (node.url !== originalUrl) {
+      node.data = { hProperties: { className: ["mdloom-image"] } };
+    }
+  }
 
   const diagramSvgs = await renderDiagrams(diagramRequests);
   const vegaSvgs = await renderVegaDiagrams(vegaRequests);

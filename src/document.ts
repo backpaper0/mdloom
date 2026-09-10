@@ -1,4 +1,5 @@
 import { DIAGRAM_VIEWER_SCRIPT } from "./diagram-viewer.js";
+import { IMAGE_VIEWER_SCRIPT } from "./image-viewer.js";
 import { SOURCE_VIEWER_SCRIPT } from "./source-viewer.js";
 
 export interface BuildHtmlDocumentOptions {
@@ -22,8 +23,8 @@ export interface BuildHtmlDocumentOptions {
 
 /**
  * Assembles the single, self-contained Output HTML file: Theme CSS, the
- * converted Document, and the Diagram Viewer script, with no external
- * assets (the Output is opened via `file://`).
+ * converted Document, and the Diagram Viewer / Source Viewer / Image Viewer
+ * scripts, with no external assets (the Output is opened via `file://`).
  */
 export function buildHtmlDocument({
   title,
@@ -54,6 +55,7 @@ ${contentHtml}
 <script>
 ${DIAGRAM_VIEWER_SCRIPT}
 ${SOURCE_VIEWER_SCRIPT}
+${IMAGE_VIEWER_SCRIPT}
 </script>
 </body>
 </html>

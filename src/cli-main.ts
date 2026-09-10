@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { basename, extname } from "node:path";
+import { basename, dirname, extname } from "node:path";
 import { parseArgs } from "node:util";
 import { buildHtmlDocument } from "./document.js";
 import { convertMarkdownToHtml } from "./pipeline/index.js";
@@ -44,7 +44,7 @@ export async function run(argv: readonly string[]): Promise<number> {
 
   try {
     const markdown = await readFile(input, "utf-8");
-    const contentHtml = await convertMarkdownToHtml(markdown);
+    const contentHtml = await convertMarkdownToHtml(markdown, dirname(input));
     const css = values.css
       ? await readFile(values.css, "utf-8")
       : DEFAULT_THEME_CSS;
