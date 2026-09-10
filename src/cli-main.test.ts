@@ -41,6 +41,80 @@ describe("run", () => {
     expect(html).toContain("<h1>Hello</h1>");
     expect(html).toContain(DEFAULT_THEME_CSS);
     expect(html).toContain('<div id="mdloom-source" hidden># Hello');
+    // Default Theme が markdown-body / mdloom-diagram をスタイリングしていることの回帰確認
+    expect(html).toContain(".markdown-body");
+    expect(html).toContain(".mdloom-diagram");
+  });
+
+  it("uses the Default Theme css when --theme default is passed explicitly", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    await writeFile(input, "# Hello\n", "utf-8");
+
+    const exitCode = await run([input, "-o", output, "--theme", "default"]);
+
+    expect(exitCode).toBe(0);
+    const html = await readFile(output, "utf-8");
+    expect(html).toContain(DEFAULT_THEME_CSS);
+  });
+
+  it("fails with an available-themes list when --theme names an unknown Theme", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    await writeFile(input, "# Hello\n", "utf-8");
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const exitCode = await run([input, "-o", output, "--theme", "nope"]);
+
+    expect(exitCode).toBe(1);
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("default"));
+    error.mockRestore();
+  });
+
+  it("fails when --theme and --css are passed together", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    const css = join(dir, "custom.css");
+    await writeFile(input, "# Hello\n", "utf-8");
+    await writeFile(css, ".markdown-body { color: blue; }", "utf-8");
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const exitCode = await run([
+      input,
+      "-o",
+      output,
+      "--theme",
+      "default",
+      "--css",
+      css,
+    ]);
+
+    expect(exitCode).toBe(1);
+    expect(error).toHaveBeenCalled();
+    error.mockRestore();
+  });
+
+  it("layers a --font css file on top of a --theme selection", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    const font = join(dir, "font.css");
+    await writeFile(input, "# Hello\n", "utf-8");
+    await writeFile(font, "@font-face { font-family: Custom; }", "utf-8");
+
+    const exitCode = await run([
+      input,
+      "-o",
+      output,
+      "--theme",
+      "default",
+      "--font",
+      font,
+    ]);
+
+    expect(exitCode).toBe(0);
+    const html = await readFile(output, "utf-8");
+    expect(html).toContain(DEFAULT_THEME_CSS);
+    expect(html).toContain("@font-face { font-family: Custom; }");
   });
 
   it("uses a custom --css file in place of the Default Theme", async () => {
