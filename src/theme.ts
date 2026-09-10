@@ -309,3 +309,22 @@ html, body {
   outline: none;
 }
 `;
+
+/**
+ * Theme名からCSSを引くレジストリ。現時点ではDefault Theme(`default`)のみ
+ * を登録する。新規Themeは、ここへ自己完結したCSS文字列を1エントリ追加する
+ * だけで済む(ADR 0003)。
+ */
+const THEMES: Readonly<Record<string, string>> = {
+  default: DEFAULT_THEME_CSS,
+};
+
+/** 利用可能なTheme名の一覧を返す。 */
+export function listThemeNames(): string[] {
+  return Object.keys(THEMES);
+}
+
+/** Theme名からCSS文字列を引く。未知のTheme名の場合は`undefined`を返す。 */
+export function getThemeCss(name: string): string | undefined {
+  return THEMES[name];
+}

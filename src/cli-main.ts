@@ -3,9 +3,9 @@ import { basename, dirname, extname } from "node:path";
 import { parseArgs } from "node:util";
 import { buildHtmlDocument } from "./document.js";
 import { convertMarkdownToHtml } from "./pipeline/index.js";
-import { DEFAULT_THEME_CSS } from "./theme.js";
+import { DEFAULT_THEME_CSS, getThemeCss, listThemeNames } from "./theme.js";
 
-const USAGE = `usage: mdloom <input.md> -o <output.html> [--css <path>] [--font <path>]
+const USAGE = `usage: mdloom <input.md> -o <output.html> [--theme <name>] [--css <path>] [--font <path>]
        mdloom css`;
 
 /**
@@ -19,13 +19,14 @@ export async function run(argv: readonly string[]): Promise<number> {
     return 0;
   }
 
-  let values: { output?: string; css?: string; font?: string };
+  let values: { output?: string; theme?: string; css?: string; font?: string };
   let positionals: string[];
   try {
     ({ values, positionals } = parseArgs({
       args: argv as string[],
       options: {
         output: { type: "string", short: "o" },
+        theme: { type: "string" },
         css: { type: "string" },
         font: { type: "string" },
       },
@@ -42,12 +43,27 @@ export async function run(argv: readonly string[]): Promise<number> {
     return 1;
   }
 
+  if (values.theme !== undefined && values.css !== undefined) {
+    console.error("mdloom: --theme and --css cannot be used together");
+    return 1;
+  }
+
+  let themeCss = DEFAULT_THEME_CSS;
+  if (values.theme !== undefined) {
+    const css = getThemeCss(values.theme);
+    if (css === undefined) {
+      console.error(
+        `mdloom: unknown theme "${values.theme}" (available: ${listThemeNames().join(", ")})`,
+      );
+      return 1;
+    }
+    themeCss = css;
+  }
+
   try {
     const markdown = await readFile(input, "utf-8");
     const contentHtml = await convertMarkdownToHtml(markdown, dirname(input));
-    const css = values.css
-      ? await readFile(values.css, "utf-8")
-      : DEFAULT_THEME_CSS;
+    const css = values.css ? await readFile(values.css, "utf-8") : themeCss;
     const fontCss = values.font
       ? await readFile(values.font, "utf-8")
       : undefined;
