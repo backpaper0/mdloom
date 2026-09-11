@@ -6,11 +6,24 @@ Markdown中のMermaid記法、またはVega/Vega-Lite仕様(```vega / ```vega-li
 
 ## インストール
 
-npmレジストリへは公開していません。GitHubリポジトリから直接インストールしてください。
+npmレジストリへは公開していません。`mdloom`コマンドをグローバルに使えるようにするには、インストールスクリプトを実行してください。
 
 ```sh
-npm install github:backpaper0/mdloom
+curl -fsSL https://raw.githubusercontent.com/backpaper0/mdloom/main/install.sh | sh
 ```
+
+内部では次のことを行っています(手元で個別に実行しても構いません)。
+
+```sh
+git clone https://github.com/backpaper0/mdloom.git ~/.mdloom
+cd ~/.mdloom
+npm ci     # devDependenciesも含めてインストールし、prepareスクリプト(tsup)でビルドします
+npm link   # distのCLIをグローバルコマンドとしてリンクします
+```
+
+アップグレードも同じスクリプトを再実行するだけです(既にcloneされている場合は`git pull`してから再ビルド・再リンクします)。手元で個別に行う場合は、cloneしたディレクトリで`git pull && npm ci && npm link`を実行してください。
+
+`npm install -g github:backpaper0/mdloom`のようなグローバルインストールは失敗します。`-g`インストールではdevDependencies(ビルドに必要な`tsup`)がインストールされないため、`prepare`スクリプトのビルドが失敗するためです。
 
 インストール時に依存パッケージ`puppeteer`の`postinstall`が実行され、Mermaid記法のSVG化に使うChromiumのフルダウンロード(Linuxで約280MB)が走ります。`ignore-scripts`設定や一部のパッケージマネージャの安全設定(pnpmの`allow-scripts`等)で`postinstall`がブロックされている環境では、Chromiumのダウンロードがスキップされ、Mermaid記法を含むDocumentの変換時に実行時エラーになります。その場合は次のいずれかで対処してください。なお、Vega/Vega-Lite仕様の図のSVG化はChromiumを使わないため、この制約を受けません。
 
