@@ -6,7 +6,37 @@ import { convertMarkdownToHtml } from "./pipeline/index.js";
 import { DEFAULT_THEME_CSS, getThemeCss, listThemeNames } from "./theme.js";
 
 const USAGE = `usage: mdloom <input.md> -o <output.html> [--theme <name>] [--css <path>] [--font <path>]
-       mdloom css`;
+       mdloom theme list
+       mdloom theme css [name]`;
+
+/** 未知のTheme名を指定された際のエラーメッセージを組み立てる。 */
+function unknownThemeError(name: string): string {
+  return `mdloom: unknown theme "${name}" (available: ${listThemeNames().join(", ")})`;
+}
+
+/** `mdloom theme list` / `mdloom theme css [name]` サブコマンドを処理する。 */
+function runTheme(argv: readonly string[]): number {
+  const [subcommand, name] = argv;
+
+  if (subcommand === "list") {
+    process.stdout.write(`${listThemeNames().join("\n")}\n`);
+    return 0;
+  }
+
+  if (subcommand === "css") {
+    const themeName = name ?? "default";
+    const css = getThemeCss(themeName);
+    if (css === undefined) {
+      console.error(unknownThemeError(themeName));
+      return 1;
+    }
+    process.stdout.write(css);
+    return 0;
+  }
+
+  console.error(USAGE);
+  return 1;
+}
 
 /**
  * Runs the mdloom CLI. Returns the process exit code rather than calling
@@ -14,9 +44,8 @@ const USAGE = `usage: mdloom <input.md> -o <output.html> [--theme <name>] [--css
  * is straightforward to exercise in tests.
  */
 export async function run(argv: readonly string[]): Promise<number> {
-  if (argv[0] === "css") {
-    process.stdout.write(DEFAULT_THEME_CSS);
-    return 0;
+  if (argv[0] === "theme") {
+    return runTheme(argv.slice(1));
   }
 
   let values: { output?: string; theme?: string; css?: string; font?: string };
@@ -52,9 +81,7 @@ export async function run(argv: readonly string[]): Promise<number> {
   if (values.theme !== undefined) {
     const css = getThemeCss(values.theme);
     if (css === undefined) {
-      console.error(
-        `mdloom: unknown theme "${values.theme}" (available: ${listThemeNames().join(", ")})`,
-      );
+      console.error(unknownThemeError(values.theme));
       return 1;
     }
     themeCss = css;

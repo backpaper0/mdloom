@@ -22,16 +22,72 @@ describe("run", () => {
     await rm(dir, { recursive: true, force: true });
   });
 
-  it("prints the default theme css for the css subcommand", async () => {
+  it("prints all Theme names, one per line, for the theme list subcommand", async () => {
     const write = vi
       .spyOn(process.stdout, "write")
       .mockImplementation(() => true);
 
-    const exitCode = await run(["css"]);
+    const exitCode = await run(["theme", "list"]);
+
+    expect(exitCode).toBe(0);
+    expect(write).toHaveBeenCalledWith(
+      "default\nocean\nforest\nsunset\nstone\n",
+    );
+    write.mockRestore();
+  });
+
+  it("prints the Default Theme css for the theme css subcommand when the name is omitted", async () => {
+    const write = vi
+      .spyOn(process.stdout, "write")
+      .mockImplementation(() => true);
+
+    const exitCode = await run(["theme", "css"]);
 
     expect(exitCode).toBe(0);
     expect(write).toHaveBeenCalledWith(DEFAULT_THEME_CSS);
     write.mockRestore();
+  });
+
+  it.each([
+    ["ocean", OCEAN_THEME_CSS],
+    ["forest", FOREST_THEME_CSS],
+    ["sunset", SUNSET_THEME_CSS],
+    ["stone", STONE_THEME_CSS],
+  ])(
+    "prints the %s Theme css for the theme css subcommand",
+    async (name, css) => {
+      const write = vi
+        .spyOn(process.stdout, "write")
+        .mockImplementation(() => true);
+
+      const exitCode = await run(["theme", "css", name]);
+
+      expect(exitCode).toBe(0);
+      expect(write).toHaveBeenCalledWith(css);
+      write.mockRestore();
+    },
+  );
+
+  it("fails with an available-themes list when theme css names an unknown Theme", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const exitCode = await run(["theme", "css", "nope"]);
+
+    expect(exitCode).toBe(1);
+    expect(error).toHaveBeenCalledWith(expect.stringContaining("default"));
+    error.mockRestore();
+  });
+
+  it("falls through to a usage message when the old bare css subcommand is invoked", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const exitCode = await run(["css"]);
+
+    expect(exitCode).toBe(1);
+    expect(error).toHaveBeenCalledWith(
+      expect.stringContaining("usage: mdloom"),
+    );
+    error.mockRestore();
   });
 
   it("converts a markdown file into a self-contained html Output", async () => {
