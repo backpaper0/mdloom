@@ -48,7 +48,13 @@ export async function run(argv: readonly string[]): Promise<number> {
     return runTheme(argv.slice(1));
   }
 
-  let values: { output?: string; theme?: string; css?: string; font?: string };
+  let values: {
+    output?: string;
+    theme?: string;
+    css?: string;
+    font?: string;
+    help?: boolean;
+  };
   let positionals: string[];
   try {
     ({ values, positionals } = parseArgs({
@@ -58,12 +64,18 @@ export async function run(argv: readonly string[]): Promise<number> {
         theme: { type: "string" },
         css: { type: "string" },
         font: { type: "string" },
+        help: { type: "boolean", short: "h" },
       },
       allowPositionals: true,
     }));
   } catch (error) {
     console.error(`mdloom: ${(error as Error).message}\n${USAGE}`);
     return 1;
+  }
+
+  if (values.help) {
+    process.stdout.write(`${USAGE}\n`);
+    return 0;
   }
 
   const input = positionals[0];

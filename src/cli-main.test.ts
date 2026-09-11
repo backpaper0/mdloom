@@ -322,6 +322,34 @@ describe("run", () => {
     error.mockRestore();
   });
 
+  it("prints a usage message and exits 0 for --help", async () => {
+    const write = vi
+      .spyOn(process.stdout, "write")
+      .mockImplementation(() => true);
+
+    const exitCode = await run(["--help"]);
+
+    expect(exitCode).toBe(0);
+    expect(write).toHaveBeenCalledWith(
+      expect.stringContaining("usage: mdloom"),
+    );
+    write.mockRestore();
+  });
+
+  it("prints a usage message and exits 0 for -h", async () => {
+    const write = vi
+      .spyOn(process.stdout, "write")
+      .mockImplementation(() => true);
+
+    const exitCode = await run(["-h"]);
+
+    expect(exitCode).toBe(0);
+    expect(write).toHaveBeenCalledWith(
+      expect.stringContaining("usage: mdloom"),
+    );
+    write.mockRestore();
+  });
+
   it("fails with a usage message when -o is missing", async () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
 
