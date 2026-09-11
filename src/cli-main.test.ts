@@ -141,6 +141,22 @@ describe("run", () => {
     error.mockRestore();
   });
 
+  it.each(["constructor", "toString", "hasOwnProperty", "__proto__"])(
+    "fails with an available-themes list when --theme is the Object.prototype property %s",
+    async (name) => {
+      const input = join(dir, "doc.md");
+      const output = join(dir, "doc.html");
+      await writeFile(input, "# Hello\n", "utf-8");
+      const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      const exitCode = await run([input, "-o", output, "--theme", name]);
+
+      expect(exitCode).toBe(1);
+      expect(error).toHaveBeenCalledWith(expect.stringContaining("default"));
+      error.mockRestore();
+    },
+  );
+
   it("fails when --theme and --css are passed together", async () => {
     const input = join(dir, "doc.md");
     const output = join(dir, "doc.html");

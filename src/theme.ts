@@ -1585,5 +1585,8 @@ export function listThemeNames(): string[] {
 
 /** Theme名からCSS文字列を引く。未知のTheme名の場合は`undefined`を返す。 */
 export function getThemeCss(name: string): string | undefined {
+  if (!Object.hasOwn(THEMES, name)) {
+    return undefined;
+  }
   return THEMES[name];
 }
