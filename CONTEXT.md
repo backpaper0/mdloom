@@ -37,4 +37,4 @@ Outputに適用されるフォントとCSSの組。変換時に差し替え可�
 _Avoid_: スタイル、スキン
 
 **Default Theme**:
-mdloomが標準で同梱する、パステルカラー調のTheme。backpaper0/markserveのトーンを参考にする。
+mdloomが標準で同梱する複数のThemeのうち、既定で使われるパステルカラー調のTheme。backpaper0/markserveのトーンを参考にする。

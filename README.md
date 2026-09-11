@@ -44,18 +44,20 @@ npx mdloom examples/example.md -o example.html
 ## 使い方
 
 ```sh
-mdloom <input.md> -o <output.html> [--css <path>] [--font <path>]
+mdloom <input.md> -o <output.html> [--theme <name>] [--css <path>] [--font <path>]
 ```
 
 - `<input.md>`: 変換対象のMarkdownファイル(Document)
 - `-o, --output <output.html>`: 出力先のHTMLファイル(Output)
-- `--css <path>`: Default Themeの代わりに使うCSSファイル
+- `--theme <name>`: 使用するTheme名を指定します(省略時はDefault Theme)。存在しない名前を指定するとエラーになります。
+- `--css <path>`: Themeの代わりに使う独自のCSSファイル(`--theme`との同時指定はエラーになります)
 - `--font <path>`: フォントを差し替えるCSSファイル(フォントファイルの埋め込み自体は行わないため、`@font-face`等の記述はこのCSS側で用意してください)
 
-Default ThemeのCSSをファイルへ書き出したい場合は`mdloom css`サブコマンドを使います。
+利用可能なTheme名の一覧表示や、ThemeのCSSをファイルへ書き出したい場合は`mdloom theme`サブコマンドを使います。
 
 ```sh
-mdloom css > my-theme.css
+mdloom theme list
+mdloom theme css [name] > my-theme.css
 ```
 
 ## ライセンス
