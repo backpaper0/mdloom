@@ -7,6 +7,7 @@ import {
   DEFAULT_THEME_CSS,
   FOREST_THEME_CSS,
   OCEAN_THEME_CSS,
+  STONE_THEME_CSS,
   SUNSET_THEME_CSS,
 } from "./theme.js";
 
@@ -107,6 +108,22 @@ describe("run", () => {
     expect(html).toContain(SUNSET_THEME_CSS);
     expect(html).not.toContain(DEFAULT_THEME_CSS);
     // Sunset ThemeがDefault Themeとセレクタ構成・装飾を共有していることの回帰確認
+    expect(html).toContain(".markdown-body");
+    expect(html).toContain(".mdloom-diagram");
+  });
+
+  it("uses the Stone Theme css when --theme stone is passed", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    await writeFile(input, "# Hello\n", "utf-8");
+
+    const exitCode = await run([input, "-o", output, "--theme", "stone"]);
+
+    expect(exitCode).toBe(0);
+    const html = await readFile(output, "utf-8");
+    expect(html).toContain(STONE_THEME_CSS);
+    expect(html).not.toContain(DEFAULT_THEME_CSS);
+    // Stone ThemeがDefault Themeとセレクタ構成・装飾を共有していることの回帰確認
     expect(html).toContain(".markdown-body");
     expect(html).toContain(".mdloom-diagram");
   });
