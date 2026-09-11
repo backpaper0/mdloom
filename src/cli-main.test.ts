@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { run } from "./cli-main.js";
-import { DEFAULT_THEME_CSS } from "./theme.js";
+import { DEFAULT_THEME_CSS, OCEAN_THEME_CSS } from "./theme.js";
 
 describe("run", () => {
   let dir: string;
@@ -56,6 +56,22 @@ describe("run", () => {
     expect(exitCode).toBe(0);
     const html = await readFile(output, "utf-8");
     expect(html).toContain(DEFAULT_THEME_CSS);
+  });
+
+  it("uses the Ocean Theme css when --theme ocean is passed", async () => {
+    const input = join(dir, "doc.md");
+    const output = join(dir, "doc.html");
+    await writeFile(input, "# Hello\n", "utf-8");
+
+    const exitCode = await run([input, "-o", output, "--theme", "ocean"]);
+
+    expect(exitCode).toBe(0);
+    const html = await readFile(output, "utf-8");
+    expect(html).toContain(OCEAN_THEME_CSS);
+    expect(html).not.toContain(DEFAULT_THEME_CSS);
+    // Ocean ThemeがDefault Themeとセレクタ構成・装飾を共有していることの回帰確認
+    expect(html).toContain(".markdown-body");
+    expect(html).toContain(".mdloom-diagram");
   });
 
   it("fails with an available-themes list when --theme names an unknown Theme", async () => {
