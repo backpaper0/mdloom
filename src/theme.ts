@@ -625,12 +625,327 @@ html, body {
 `;
 
 /**
+ * mdloom Forest Theme.
+ * 元データ: プロトタイプブランチ `prototype/theme-candidates` の
+ * `src/theme-candidates.prototype.html` (forest候補)。
+ * 森をイメージした緑系、オリーブグリーン見出し・若葉グリーンのアクセント。
+ * セレクタ構成・装飾はDefault Themeと同一構造で、配色値のみが異なる(ADR 0003)。
+ */
+export const FOREST_THEME_CSS = `:root {
+  --forest-bg: #fafdf7;
+  --forest-text: #445840;
+  --forest-heading: #4a7a3f;
+  --forest-pink: #dcf5cf;
+  --forest-purple: #e3edc8;
+  --forest-blue: #cdeedc;
+  --forest-mint: #d6f5df;
+  --forest-yellow: #f3f5c8;
+  --forest-peach: #f0e4b0;
+  --forest-border: #e3ecd8;
+  --forest-accent: #7fae52;
+  --forest-link: #5c8f3c;
+  --forest-code-bg: #f2f7ec;
+  --forest-quote-bg: #f1f7ea;
+  --forest-shadow: rgba(92, 143, 60, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.markdown-body {
+  font-family: "UD Digi Kyokasho NP-R", "UD Digi Kyokasho NP",
+    "UD Digi Kyokasho N-R", "UD Digi Kyokasho N", "UDデジタル教科書体 NP-R",
+    "Segoe UI", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+  background: var(--forest-bg);
+  color: var(--forest-text);
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 3rem;
+  letter-spacing: 0.02em;
+}
+
+/* Headings */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: var(--forest-heading);
+  font-weight: 700;
+  line-height: 1.4;
+  margin-top: 1.8em;
+  margin-bottom: 0.7em;
+}
+
+.markdown-body h1 {
+  font-size: 2.2em;
+  padding-bottom: 0.4em;
+  background: linear-gradient(120deg, #5c8f3c, #7fae52, #9fc46a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, var(--forest-pink), var(--forest-purple), var(--forest-blue)) 1;
+}
+
+.markdown-body h2 {
+  font-size: 1.6em;
+  padding: 0.2em 0.7em;
+  border-left: 6px solid var(--forest-accent);
+  background: linear-gradient(90deg, var(--forest-purple), transparent);
+  border-radius: 0 8px 8px 0;
+}
+
+.markdown-body h3 {
+  font-size: 1.3em;
+  padding-bottom: 0.3em;
+  border-bottom: 2px dashed var(--forest-border);
+}
+
+.markdown-body h4 {
+  font-size: 1.1em;
+}
+
+.markdown-body h4::before {
+  content: "✿ ";
+  color: var(--forest-accent);
+}
+
+/* Links */
+.markdown-body a {
+  color: var(--forest-link);
+  text-decoration: none;
+  border-bottom: 1px solid var(--forest-accent);
+  transition: all 0.2s ease;
+}
+
+.markdown-body a:hover {
+  color: var(--forest-heading);
+  background: var(--forest-purple);
+  border-radius: 3px;
+}
+
+/* Paragraphs & lists */
+.markdown-body p {
+  margin: 1em 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.6em;
+}
+
+.markdown-body li {
+  margin: 0.4em 0;
+}
+
+.markdown-body ul li::marker {
+  color: var(--forest-accent);
+}
+
+.markdown-body ol li::marker {
+  color: var(--forest-accent);
+  font-weight: 700;
+}
+
+/* Blockquote */
+.markdown-body blockquote {
+  margin: 1.2em 0;
+  padding: 0.8em 1.4em;
+  background: var(--forest-quote-bg);
+  border-left: 5px solid var(--forest-accent);
+  border-radius: 0 10px 10px 0;
+  color: var(--forest-text);
+  box-shadow: 0 2px 8px var(--forest-shadow);
+}
+
+.markdown-body blockquote p {
+  margin: 0.3em 0;
+}
+
+/* Inline code */
+.markdown-body code {
+  font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+  background: var(--forest-code-bg);
+  color: #4a7a2f;
+  padding: 0.15em 0.45em;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+/* Code block */
+.markdown-body pre {
+  background: var(--forest-code-bg);
+  padding: 1.2em;
+  border-radius: 12px;
+  overflow: auto;
+  border: 1px solid var(--forest-border);
+  box-shadow: 0 4px 14px var(--forest-shadow);
+}
+
+.markdown-body pre code {
+  background: transparent;
+  color: var(--forest-text);
+  padding: 0;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+/* Tables */
+.markdown-body table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin: 1.4em 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px var(--forest-shadow);
+}
+
+.markdown-body th {
+  background: linear-gradient(120deg, var(--forest-purple), var(--forest-pink));
+  color: var(--forest-heading);
+  font-weight: 700;
+  padding: 0.7em 1em;
+  text-align: left;
+}
+
+.markdown-body td {
+  padding: 0.6em 1em;
+  border-top: 1px solid var(--forest-border);
+}
+
+.markdown-body tr:nth-child(even) td {
+  background: var(--forest-quote-bg);
+}
+
+.markdown-body tr:hover td {
+  background: var(--forest-blue);
+}
+
+/* Horizontal rule */
+.markdown-body hr {
+  border: none;
+  height: 3px;
+  margin: 2.5em 0;
+  background: linear-gradient(90deg, transparent, var(--forest-pink), var(--forest-purple), var(--forest-blue), transparent);
+  border-radius: 3px;
+}
+
+/* Images */
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--forest-shadow);
+}
+
+/* Image Viewer への導線 (CONTEXT.md: Image / Image Viewer) */
+.mdloom-image {
+  cursor: zoom-in;
+}
+
+.mdloom-image:hover,
+.mdloom-image:focus-visible {
+  box-shadow: 0 8px 24px var(--forest-shadow);
+  outline: none;
+}
+
+/* Task lists */
+.markdown-body input[type="checkbox"] {
+  accent-color: var(--forest-accent);
+  width: 1.05em;
+  height: 1.05em;
+  vertical-align: middle;
+}
+
+/* Emphasis */
+.markdown-body strong {
+  color: var(--forest-heading);
+  font-weight: 700;
+}
+
+.markdown-body mark {
+  background: var(--forest-yellow);
+  color: var(--forest-text);
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+}
+
+/* Diagram Viewer への導線 (CONTEXT.md: Diagram / Diagram Viewer) */
+.mdloom-diagram {
+  position: relative;
+  margin: 1.4em 0;
+  background: var(--forest-quote-bg);
+  border: 1px solid var(--forest-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 14px var(--forest-shadow);
+  padding: 1.4rem;
+  text-align: center;
+  cursor: zoom-in;
+}
+
+.mdloom-diagram:hover,
+.mdloom-diagram:focus-visible {
+  box-shadow: 0 6px 20px var(--forest-shadow);
+  outline: none;
+}
+
+.mdloom-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mdloom-diagram::after {
+  content: "\\1F50D クリックで拡大表示";
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 0.8em;
+  color: var(--forest-heading);
+}
+
+/* Source Viewer への導線 (CONTEXT.md: Source Viewer) */
+.mdloom-toolbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.2rem 3rem 0;
+  text-align: right;
+}
+
+.mdloom-source-viewer-trigger {
+  font: inherit;
+  font-size: 0.85em;
+  color: var(--forest-heading);
+  background: var(--forest-quote-bg);
+  border: 1px solid var(--forest-border);
+  border-radius: 8px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+}
+
+.mdloom-source-viewer-trigger:hover,
+.mdloom-source-viewer-trigger:focus-visible {
+  box-shadow: 0 4px 14px var(--forest-shadow);
+  outline: none;
+}
+`;
+
+/**
  * Theme名からCSSを引くレジストリ。新規Themeは、ここへ自己完結したCSS文字列を
  * 1エントリ追加するだけで済む(ADR 0003)。
  */
 const THEMES: Readonly<Record<string, string>> = {
   default: DEFAULT_THEME_CSS,
   ocean: OCEAN_THEME_CSS,
+  forest: FOREST_THEME_CSS,
 };
 
 /** 利用可能なTheme名の一覧を返す。 */
